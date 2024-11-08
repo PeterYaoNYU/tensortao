@@ -6,6 +6,16 @@ gcc 4.4.7 or 4.8.5
 OS: Linux, MacOS and Windows
 
 ### BFS:
+I am not sure what your requirement is, because asking me to code sth as BFS seems to be a trick quesion. 
+
+So I take a step further and do 4 BFS, after learning about bottom up from enterprise, top down, bottom up, top down threaded, and bottom up threaded. 
+
+The invokation is in the file: util/graph_reader_new/main.cpp
+while the code is in: util/graph_reader_new/graph.hpp
+
+You may refer to git changes to see the files changed. 
+
+
 first should generate the graph in binary form
 ```bash
 cd util/tuple_text_to_binary_csr_mem
