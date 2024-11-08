@@ -173,3 +173,66 @@ void graph<file_vert_t,file_index_t, file_weight_t, new_vert_t,new_index_t,new_w
 	std::cout << std::endl;
 }
 
+
+// the bottom up algorithm requires reversed graph
+// but the graph we generate with toy seems to be undirected
+// so we do not need to worry about it unless we are playing with reversed graph
+// in that case, first inverse every edge, then call this function
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t,file_index_t, file_weight_t, new_vert_t,new_index_t,new_weight_t>::bottom_up_bfs(new_index_t start_vertex)
+{
+	if (start_vertex >= vert_count)
+	{
+		std::cerr << "invalid vertex count" << std::endl;
+		return;
+	}
+
+	// the standard for a bfs, keep track of visited vertices
+	// and use a queue to keep track of the next vertices to visit
+	std::vector<bool> visited(vert_count, false);
+
+	std::set<new_index_t> current_layer;
+	current_layer.insert(start_vertex);	
+
+	// std::vector<new_index_t> result;
+
+	visited[start_vertex] = true;	
+
+	std::cout << "BFS bottom up starting from vertex " << start_vertex << ":\n" << start_vertex << " ";
+
+	while (!current_layer.empty())
+	{
+		std::set<new_index_t> next_layer;
+		next_layer.clear();
+
+		for (int i = 0; i < vert_count; i++)
+		{
+			if (!visited[i]) {
+				// std::cout << "checking " << i << std::endl;
+				auto beg = beg_pos[i];
+				auto end = beg_pos[i + 1];
+
+				for (auto j = beg; j < end; j++)
+				{
+					auto neighbor = csr[j];
+					if (current_layer.find(neighbor) != current_layer.end())
+					{
+						// std::cout << i << " is a neighbor of " << neighbor << std::endl;
+						next_layer.insert(i);
+						visited[i] = true;
+						std::cout << i << " ";
+
+						break;
+						// result.append(i);
+					}
+				}
+					
+			}
+		}
+
+		current_layer = next_layer;
+	}
+	std::cout << std::endl;
+}

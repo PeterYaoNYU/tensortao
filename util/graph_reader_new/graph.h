@@ -13,6 +13,8 @@
 #include <vector>
 #include <queue>
 
+#include <set>
+
 inline off_t fsize(const char *filename) {
 	struct stat st; 
 	if (stat(filename, &st) == 0)
@@ -44,6 +46,8 @@ class graph
 		// in the main.cp file
 		// I prefer to do it here
 		void bfs(new_index_t start_vertex);
+		void bottom_up_bfs(new_index_t start_vertex);
+
 };
 #include "graph.hpp"
 #endif
