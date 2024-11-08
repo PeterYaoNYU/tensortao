@@ -5,6 +5,30 @@ gcc 4.4.7 or 4.8.5
 
 OS: Linux, MacOS and Windows
 
+### BFS:
+first should generate the graph in binary form
+```bash
+cd util/tuple_text_to_binary_csr_mem
+
+make
+
+./text_to_bin.bin toy_graph/toy.dat 0 2 1
+
+```
+
+then should run the bfs with the graph reader new:
+
+```bash
+cd util/graph_reader_new/
+
+make
+
+./graph_loader.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_beg_pos.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_csr.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_weight.bin 
+
+
+
+```
+
 -----------
 Graph format basics
 ----------------------

@@ -129,3 +129,47 @@ new_vert_t,new_index_t,new_weight_t>
 		<<edge_count<<" edges "<<wtime()-tm<<" second(s)\n";
 }
 
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t,file_index_t, file_weight_t, new_vert_t,new_index_t,new_weight_t>::bfs(new_index_t start_vertex)
+{
+	if (start_vertex >= vert_count)
+	{
+		std::cerr << "invalid vertex count" << std::endl;
+		return;
+	}
+
+	// the standard for a bfs, keep track of visited vertices
+	// and use a queue to keep track of the next vertices to visit
+	std::vector<bool> visited(vert_count, false);
+	std::queue<new_index_t> q;
+
+	visited[start_vertex] = true;	
+	q.push(start_vertex);	
+
+	std::cout << "BFS starting from vertex " << start_vertex << ":\n";
+
+	while (!q.empty())
+	{
+		new_index_t current = q.front();
+		q.pop();
+		
+		std::cout << current << " ";
+		
+		auto beg = beg_pos[current];
+		auto end = beg_pos[current + 1];
+
+		for (auto i = beg; i < end; i++)
+		{
+			auto neighbor = csr[i];
+			if (!visited[neighbor])
+			{
+				visited[neighbor] = true;
+				q.push(neighbor);
+			}
+		}
+	}
+	std::cout << std::endl;
+}
+

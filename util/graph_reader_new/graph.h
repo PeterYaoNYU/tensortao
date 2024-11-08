@@ -8,6 +8,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/stat.h>
+
+
+#include <vector>
+#include <queue>
+
 inline off_t fsize(const char *filename) {
 	struct stat st; 
 	if (stat(filename, &st) == 0)
@@ -34,6 +39,11 @@ class graph
 		graph(const char *beg_file, 
 				const char *csr_file,
 				const char *weight_file);
+
+		// though the readme told me to implement this 
+		// in the main.cp file
+		// I prefer to do it here
+		void bfs(new_index_t start_vertex);
 };
 #include "graph.hpp"
 #endif

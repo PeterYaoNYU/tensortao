@@ -20,6 +20,8 @@ int main(int args, char **argv)
     //**
     //You can implement your single threaded graph algorithm here.
     //like BFS, SSSP, PageRank and etc.
+
+    ginst->bfs(0);
     
     for(int i = 0; i < ginst->vert_count; i++)
     {
