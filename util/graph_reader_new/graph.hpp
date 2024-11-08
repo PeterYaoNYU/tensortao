@@ -293,7 +293,7 @@ top_down_threaded(new_index_t start_vertex, int num_threads)
 	visited[start_vertex] = true;	
 	q.push(start_vertex);	
 
-	std::cout << "BFS starting from vertex " << start_vertex << ":\n" << start_vertex << " ";
+	std::cout << "BFS top down threaded starting from vertex " << start_vertex << ":\n" << start_vertex << " ";
 
 	std::vector<std::thread> threads;
 	std::mutex q_mutex;
@@ -304,6 +304,82 @@ top_down_threaded(new_index_t start_vertex, int num_threads)
 
 	for (int i = 0; i < num_threads; i++) {
 		threads[i].join();
+	}
+	std::cout << std::endl;
+}
+
+
+// threaded bottom up
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t, file_index_t, file_weight_t, new_vert_t, new_index_t, new_weight_t>::
+process_bottom_up_layer(std::set<new_index_t>& current_layer, std::vector<bool>& visited, std::mutex& q_mutex, std::set<new_index_t>& next_layer, int thread_id, int num_threads)
+{
+	for (int i = thread_id; i < vert_count; i += num_threads) {
+		if (!visited[i]) {
+			auto beg = beg_pos[i];
+			auto end = beg_pos[i + 1];
+
+			for (auto j = beg; j < end; j++) {
+				auto neighbor = csr[j];
+				if (current_layer.find(neighbor) != current_layer.end()) {
+					{
+						std::lock_guard<std::mutex> lock(q_mutex);
+						next_layer.insert(i);
+						visited[i] = true;
+						std::cout << i << " ";
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t, file_index_t, file_weight_t, new_vert_t, new_index_t, new_weight_t>::
+bottom_up_threaded(new_index_t start_vertex, int num_threads)
+{
+	if (start_vertex >= vert_count)
+	{
+		std::cerr << "invalid vertex count" << std::endl;
+		return;
+	}
+
+	std::vector<bool> visited(vert_count, false);
+
+	std::set<new_index_t> current_layer;
+	current_layer.insert(start_vertex);	
+
+	visited[start_vertex] = true;	
+
+	std::cout << "BFS bottom up threaded starting from vertex " << start_vertex << ":\n" << start_vertex << " ";
+
+
+
+	while (!current_layer.empty())
+	{
+		std::set<new_index_t> next_layer;
+		next_layer.clear();
+
+		std::vector<std::thread> threads;
+		std::mutex q_mutex;
+
+		// std::cout << "start pushing threads..." << std::endl;
+		for (int i = 0; i < num_threads; i++) {
+			int thread_id = i;	
+			threads.push_back(std::thread(&graph::process_bottom_up_layer, this, std::ref(current_layer), std::ref(visited), std::ref(q_mutex), std::ref(next_layer), thread_id, num_threads));
+		}
+
+		for (int i = 0; i < num_threads; i++) {
+			threads[i].join();
+		}
+
+		current_layer = next_layer;
 	}
 	std::cout << std::endl;
 }

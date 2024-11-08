@@ -21,8 +21,13 @@ int main(int args, char **argv)
     //You can implement your single threaded graph algorithm here.
     //like BFS, SSSP, PageRank and etc.
 
-    // ginst->bfs(1);
+    ginst->bfs(8);
+    ginst->bottom_up_bfs(1);
     ginst->top_down_threaded(1, 5);
+    // ginst->bottom_up_threaded(1, 5);
+
+    ginst->bottom_up_threaded(8, 5);
+
     
     for(int i = 0; i < ginst->vert_count; i++)
     {

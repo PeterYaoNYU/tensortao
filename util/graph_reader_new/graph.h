@@ -52,10 +52,12 @@ class graph
 		void bfs(new_index_t start_vertex);
 		void bottom_up_bfs(new_index_t start_vertex);
 		void top_down_threaded(new_index_t start_vertex, int num_threads);
+		void bottom_up_threaded(new_index_t start_vertex, int num_threads);
+
 
 	private:
 		void process_top_down_layer(std::queue<new_index_t> &q, std::vector<bool> &visited, std::mutex& q_mutex);
-
+		void process_bottom_up_layer(std::set<new_index_t>& current_layer, std::vector<bool>& visited, std::mutex& q_mutex, std::set<new_index_t>& next_layer, int thread_id, int num_threads);
 };
 #include "graph.hpp"
 #endif
