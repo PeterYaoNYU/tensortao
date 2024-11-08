@@ -15,6 +15,10 @@
 
 #include <set>
 
+
+#include <mutex>
+#include <thread>
+
 inline off_t fsize(const char *filename) {
 	struct stat st; 
 	if (stat(filename, &st) == 0)
@@ -47,6 +51,10 @@ class graph
 		// I prefer to do it here
 		void bfs(new_index_t start_vertex);
 		void bottom_up_bfs(new_index_t start_vertex);
+		void top_down_threaded(new_index_t start_vertex, int num_threads);
+
+	private:
+		void process_top_down_layer(std::queue<new_index_t> &q, std::vector<bool> &visited, std::mutex& q_mutex);
 
 };
 #include "graph.hpp"

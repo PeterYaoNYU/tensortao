@@ -24,10 +24,12 @@ cd util/graph_reader_new/
 make
 
 ./graph_loader.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_beg_pos.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_csr.bin ../tuple_text_to_binary_csr_mem/toy_graph/toy.dat_weight.bin 
-
-
-
 ```
+
+the bottom up algorithm requires reversed graph  
+but the graph we generate with toy seems to be undirected  
+so we do not need to worry about it unless we are playing with reversed graph  
+in that case, first inverse every edge, then call this function  
 
 -----------
 Graph format basics

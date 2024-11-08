@@ -236,3 +236,74 @@ void graph<file_vert_t,file_index_t, file_weight_t, new_vert_t,new_index_t,new_w
 	}
 	std::cout << std::endl;
 }
+
+
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t, file_index_t, file_weight_t, new_vert_t, new_index_t, new_weight_t>::
+process_top_down_layer(std::queue<new_index_t>& q, std::vector<bool>& visited, std::mutex& q_mutex)
+{
+	while(true) {
+		new_index_t current;
+		{
+			std::lock_guard<std::mutex> lock(q_mutex);
+			if(q.empty()) {
+				break;
+			}
+			current = q.front();
+			q.pop();
+		}
+
+		auto beg = beg_pos[current];
+		auto end = beg_pos[current + 1];
+
+		for (auto i = beg; i < end; i++) {
+			auto neighbor = csr[i];
+			{
+				std::lock_guard<std::mutex> lock(q_mutex);
+				if (!visited[neighbor]) {
+					visited[neighbor] = true;
+					q.push(neighbor);
+					std::cout << neighbor << " ";
+				}
+			}
+		}
+	}
+}
+
+
+template<
+typename file_vert_t, typename file_index_t, typename file_weight_t,
+typename new_vert_t, typename new_index_t, typename new_weight_t>
+void graph<file_vert_t, file_index_t, file_weight_t, new_vert_t, new_index_t, new_weight_t>::
+top_down_threaded(new_index_t start_vertex, int num_threads)
+{
+	if (start_vertex >= vert_count)
+	{
+		std::cerr << "invalid vertex count" << std::endl;
+		return;
+	}
+
+	// the standard for a bfs, keep track of visited vertices
+	// and use a queue to keep track of the next vertices to visit
+	std::vector<bool> visited(vert_count, false);
+	std::queue<new_index_t> q;
+
+	visited[start_vertex] = true;	
+	q.push(start_vertex);	
+
+	std::cout << "BFS starting from vertex " << start_vertex << ":\n" << start_vertex << " ";
+
+	std::vector<std::thread> threads;
+	std::mutex q_mutex;
+
+	for (int i = 0; i < num_threads; i++) {
+		threads.push_back(std::thread(&graph::process_top_down_layer, this, std::ref(q), std::ref(visited), std::ref(q_mutex)));
+	}
+
+	for (int i = 0; i < num_threads; i++) {
+		threads[i].join();
+	}
+	std::cout << std::endl;
+}

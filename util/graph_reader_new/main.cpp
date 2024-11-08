@@ -22,7 +22,7 @@ int main(int args, char **argv)
     //like BFS, SSSP, PageRank and etc.
 
     // ginst->bfs(1);
-    ginst->bottom_up_bfs(8);
+    ginst->top_down_threaded(1, 5);
     
     for(int i = 0; i < ginst->vert_count; i++)
     {
